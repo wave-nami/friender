@@ -25,6 +25,7 @@ def client():
     else:
         return render_template('user.html')
 
+
 @app.route("/login", methods=["POST", "GET"])
 def login():
     # check credentials with db
@@ -37,6 +38,7 @@ def login():
         return redirect(url_for('client'))
     else:
         return redirect(url_for('home'))
+
 
 @app.route("/registration", methods=["POST", "GET"])
 def registration():
@@ -108,15 +110,40 @@ def register():
     return redirect(url_for("numberVerification"))
 
 
-@app.route("userinfo", methods=["POST", "GET"])
-def edit_userinfo():
+@app.route("/userinfo")
+def userinfo():
     # TODO : user profile page
+    return render_template('userinfo.html')
+
+
+@app.route("/action/edit", methods=["POST", "GET"])
+def edit_userinfo():
+    # TODO : edit user information
     pass
 
 
-@app.route("/action/edituserinfo", methods=["POST", "GET"])
-def edit_userinfo():
-    # TODO : edit user infomation
+@app.route("/action/interest", methods=["POST", "GET"])
+def interest():
+    # TODO : show users that clicked on the same interest
+    users = db_get_interest_list()
+    return redirect(url_for("client"))
+
+
+@app.route("/chat")
+def chat():
+    # TODO : show chat between 2 users
+    pass
+
+
+@app.route("/action/friendrequest", methods=["POST", "GET"])
+def friendrequest():
+    # TODO : send someone a friend request
+    pass
+
+
+@app.route("/action/friendrequest", methods=["POST", "GET"])
+def friendrequest():
+    # TODO : accept a friend request
     pass
 
 
@@ -128,6 +155,7 @@ def logout():
         session["logged_in"] = False
         session.pop('username', None)
         return redirect(url_for('home'))
+
 
 def verify_registration(un, pw, c):
     """ verify user registration """
@@ -169,18 +197,28 @@ def db_get_user_list():
     brutish = []
     return brutish
 
+
 def db_check_creds(un, pw):
     # TODO : check creds
     return True
+
 
 def db_get_userinfo():
     # TODO : get user's info
     pass
 
+
 def db_set_userinfo(inp):
     # TODO : set user's info
     pass
 
+
 def db_remove_user(un):
     # TODO : remove user info
     pass
+
+
+def db_get_interest_list(int):
+    # TODO : get users that have the same interest
+    l = []
+    return l
