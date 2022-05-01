@@ -1,3 +1,4 @@
+from obj import *
 from flask import Flask, redirect, render_template, request, session, url_for
 import os
 import sqlite3 as sl
@@ -265,6 +266,9 @@ def db_get_interest_list(inter):
     return l
 
 
-db_create_user("bob", "morgan", "bm", 3, "carol", "male", "hi!", "@carol")
-db_create_user("bob", "morgan", "carol", 3, "carol", "male", "hi!", "@carol")
-db_create_user("bob", "morgan", "thomas", 3, "carol", "male", "hi!", "@carol")
+if __name__ == "__main__":
+    app.secret_key = os.urandom(12)
+    app.run(debug=True)
+    # db_create_user("bob", "morgan", "bm", 3, "carol", "male", "hi!", "@carol")
+    # db_create_user("bob", "morgan", "carol", 3, "carol", "male", "hi!", "@carol")
+    # db_create_user("bob", "morgan", "thomas", 3, "carol", "male", "hi!", "@carol")
