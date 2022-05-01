@@ -1,3 +1,5 @@
+import hashlib
+
 from obj import *
 from flask import Flask, redirect, render_template, request, session, url_for
 import os
@@ -6,7 +8,6 @@ from datetime import datetime, date
 
 app = Flask(__name__)
 db = 'userinfo.db'
-
 
 @app.route("/")
 def home_page():
@@ -24,7 +25,7 @@ def client_page():
         return render_template('admin.html')
     # user: sent to profile.html
     else:
-        return render_template('user.html')
+        return render_template('user.html', test=session['userid'])
 
 
 @app.route("/page/login", methods=["POST", "GET"])
@@ -37,8 +38,13 @@ def login_page():
 @app.route("/login", methods=["POST", "GET"])
 def login():
     """ from login.html, log in form """
-    return redirect(url_for("client_page"))
-
+    un = request.form['username']
+    pw = request.form['password']
+    if (db_check_creds(un,pw)):
+        currentUser = db_get_user(un)
+        session['userid'] = currentUser[1]
+        return redirect(url_for("client_page"))
+    return redirect(url_for("home_page"))
 
 @app.route("/page/register", methods=["POST", "GET"])
 def register_page():
@@ -212,20 +218,20 @@ def db_create_interestchannels():
         interestdict[x] = records[x-1][0]
     return interestdict
 
+
 def db_create_friendrequest(otherid):
-    #TODO: create a friend request on the table based on the other person's user id
-    #changer userid=1 to session["userid"]
     conn = sl.connect(db)
     curs = conn.cursor()
-    stmt = "INSERT INTO friendRequest (userId, otherId) VALUES (1," + str(otherid) + ")"
+    stmt = "INSERT OR IGNORE INTO friendRequest (userId, otherId) VALUES (" + str(session['userid']) + "," + str(otherid) + ")"
     curs.execute(stmt)
     conn.commit()
     conn.close()
 
+
 def db_create_user(fname, lname, uname, age, pw, pronoun, bio, sm):
     conn = sl.connect(db)
     curs = conn.cursor()
-    hashed = hash(pw)
+    hashed = int(hashlib.sha512(pw.encode('utf-8')).hexdigest(), 16)
     v = (fname, lname, uname, age, hashed, pronoun, bio, sm)
     stmt = "INSERT OR IGNORE INTO userinfo (f_name,l_name,u_name,age,pw,pronouns,bio,sm) VALUES " + str(v)
     curs.execute(stmt)
@@ -234,10 +240,9 @@ def db_create_user(fname, lname, uname, age, pw, pronoun, bio, sm):
 
 
 def db_create_user_interests(in1, in2, in3, in4, in5):
-    #changed (revert back to session["userid"] from "1")
     conn = sl.connect(db)
     curs = conn.cursor()
-    v = (1, in1, in2, in3, in4, in5)
+    v = (session['userid'], in1, in2, in3, in4, in5)
     stmt = "INSERT OR IGNORE INTO userInterest (user_id,i1,i2,i3,i4,i5) VALUES (?,?,?,?,?,?)"
     curs.execute(stmt, v)
     conn.commit()
@@ -258,25 +263,35 @@ def db_get_username_list():
 
 
 def db_check_creds(un, pw):
+    if db_check_usr(un):
+        conn = sl.connect(db)
+        curs = conn.cursor()
+        v = (un,)
+        stmt = "SELECT * FROM userinfo WHERE u_name =?"
+        curs.execute(stmt, v)
+        records = curs.fetchall()
+        hashed = int(hashlib.sha512(pw.encode('utf-8')).hexdigest(), 16)
+        if "{:e}".format(hashed) == "{:e}".format(float(records[0][5])) and un == str(records[0][3]):
+            conn.close()
+            return True
+        conn.close()
+        return False
+    return False
+
+
+def db_check_usr(un):
     conn = sl.connect(db)
     curs = conn.cursor()
     v = (un,)
-    stmt = "SELECT * FROM userinfo WHERE u_name =?"
+    stmt = "SELECT COUNT(1) FROM userInfo WHERE u_name = ?"
     curs.execute(stmt, v)
-    if pw == curs.fetchone()[5]:
-        conn.close()
+    records = curs.fetchall()
+    if records[0][0] == 1:
         return True
-    conn.close()
     return False
-
-def db_get_usersession():
-    # TODO
-    #for when they login, set session[userid]
-    pass
 
 
 def db_get_user(un):
-    # TODO
     # when need to open profile, return user object
     conn = sl.connect(db)
     curs = conn.cursor()
@@ -287,8 +302,45 @@ def db_get_user(un):
     conn.close()
     intmap = db_get_user_interestmap()
     friendlist = db_get_user_friendList()
-    # profile = UserProfile(records1[0][1], records1[0][2], records1[0][4],
-    # records1[0][3], records1[0][5], records1[0][6], )
+    receivedReqs = db_get_user_receivedReq()
+    profile = UserProfile(records1[0][1], records1[0][2], records1[0][4],
+    records1[0][3], records1[0][5], records1[0][6], intmap, friendlist, receivedReqs, records1[0][7],records1[0][8])
+    result = (profile, records1[0][0])
+    return result
+
+
+def db_get_user_receivedReq():
+    ids = db_get_user_receivedReqids()
+    list = db_get_user_receivedReqstrings(ids)
+    return list
+
+def db_get_user_receivedReqids():
+    conn = sl.connect(db)
+    curs = conn.cursor()
+    stmt = "SELECT userId FROM friendRequest WHERE otherId = " + str(session['userid'])
+    curs.execute(stmt)
+    records = curs.fetchall()
+    conn.close()
+    ids = []
+    for x in range(len(records)):
+        ids.append(records[x][0])
+    return ids
+
+def db_get_user_receivedReqstrings(ids):
+    conn = sl.connect(db)
+    curs = conn.cursor()
+    stmt = "SELECT f_name FROM userInfo WHERE "
+    for x in range(len(ids) - 1):
+        stmt += "id=" + str(ids[x]) + " OR "
+    stmt += "id=" + str(ids[len(ids)-1])
+    curs.execute(stmt)
+    records = curs.fetchall()
+    list = []
+    for x in range(len(records)):
+        list.append(records[x][0])
+    conn.close()
+    return list
+
 
 def db_get_user_friendList():
     ids = db_get_user_friendListids()
@@ -297,10 +349,9 @@ def db_get_user_friendList():
 
 
 def db_get_user_friendListids():
-    # change userid = '1' to session["userid"]
     conn = sl.connect(db)
     curs = conn.cursor()
-    stmt = "SELECT f1,f2,f3 FROM friendsList WHERE user_id = 1"
+    stmt = "SELECT f1,f2,f3 FROM friendsList WHERE user_id = " + str(session['userid'])
     curs.execute(stmt)
     records = curs.fetchall()
     conn.close()
@@ -309,8 +360,8 @@ def db_get_user_friendListids():
         friendList.append(records[0][x])
     return friendList
 
+
 def db_get_user_friendListstrings(ids):
-    # change userid = '1' to session["userid"]
     conn = sl.connect(db)
     curs = conn.cursor()
     v = (ids[0], ids[1], ids[2])
@@ -323,6 +374,7 @@ def db_get_user_friendListstrings(ids):
     conn.close()
     return list
 
+
 def db_get_user_interestmap():
     idlist = db_get_user_interestids()
     stringlist = db_get_user_intereststrings(idlist)
@@ -333,10 +385,9 @@ def db_get_user_interestmap():
 
 
 def db_get_user_interestids():
-    # change userid=1 to session["userid"]
     conn = sl.connect(db)
     curs = conn.cursor()
-    stmt = "SELECT i1,i2,i3,i4,i5 FROM userInterest WHERE user_id=1"
+    stmt = "SELECT i1,i2,i3,i4,i5 FROM userInterest WHERE user_id=" + str(session['userid'])
     curs.execute(stmt)
     records = curs.fetchall()
     conn.close()
@@ -394,6 +445,15 @@ def db_get_interest_list(inter):
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
     app.run(debug=True)
-    # db_create_user("bob", "morgan", "bm", 3, "carol", "male", "hi!", "@carol")
-    # db_create_user("bob", "morgan", "carol", 3, "carol", "male", "hi!", "@carol")
-    # db_create_user("bob", "morgan", "thomas", 3, "carol", "male", "hi!", "@carol")
+
+
+#db_create_user("bob", "morgan", "bm", 3, "carol", "male", "hi!", "@carol")
+#db_create_user("bob2", "morgan", "carol", 3, "carol", "male", "hi!", "@carol")
+#db_create_user("bob3", "morgan", "thomas", 3, "carol", "male", "hi!", "@carol")
+#db_create_user("bob4", "morgan", "barley", 3, "carol", "male", "hi!", "@carol")
+#db_create_friendrequest(1)
+#db_create_user_interests(1,2,3,4,5)
+#print(db_get_user("barley"))
+
+
+
