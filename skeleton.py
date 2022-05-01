@@ -19,7 +19,7 @@ def home():
 def client():
     """ send user to their user page """
     # admin: sent to admin.html
-    if session['admin'] == True:
+    if session['admin']:
         return render_template('admin.html')
     # user: sent to user.html
     else:
