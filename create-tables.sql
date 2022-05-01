@@ -47,6 +47,12 @@ CREATE TABLE IF NOT EXISTS friendsList(
 );
 
 INSERT INTO friendsList(user_id,f1,f2,f3) VALUES (1,2,3,4);
+INSERT INTO userInterest(user_id,i1,i2,i3,i4,i5) VALUES (1,1,2,3,4,5);
+INSERT INTO userInfo(f_name,l_name,u_name,age,pw,pronouns,bio,sm) VALUES ("bob", "morgan", "bm", 3, "carol", "male", "hi!", "@carol"),
+("bob2", "morgan", "carol", 3, "carol", "male", "hi!", "@carol"),
+("bob3", "morgan", "thomas", 3, "carol", "male", "hi!", "@carol"),
+("bob4", "morgan", "barley", 3, "carol", "male", "hi!", "@carol");
+
 
 INSERT INTO interests(name) VALUES
 ('Literature'),
