@@ -1,15 +1,90 @@
+<!-- register, log_in, my_profile, friend_list, log_out -->
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-    </head>
-    <body>
-        <h1>{{ message }}</h1>
-        <form action="/login" method="POST">
-            <input type="username" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
-            <input type="submit" value="Log in">
-        </form>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>knot a stranger</title>
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='squarelogo.png')}}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
+
+    <style>
+        /* Internal CSS */
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #D4C5C5;" style="padding:0;">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <img src="{{url_for('static', filename='navbar.png')}}" alt="knot a stranger" height="50" class="d-inline-block align-text-top">
+            </span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav me-auto">
+                </div>
+                <form action="/page/register" method="POST" >
+                    <button type="submit" class="btn btn-link navlink"> Register </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <!-- END: NAVBAR -->
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <h1 class="mt-5 mb-4">Hi Stranger!</h1>
+            </div>
+        </div>
+
+        <!-- form -->
+        <div class="row justify-content-center">
+            <div class="col-8">
+                <form class="form-floating" action="/login" method="POST" id="login_form"novalidate>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingUsername" placeholder="Username" name="username">
+                        <label for="floatingUsername" class="label">Username</label>
+                        <div class="invalid-feedback">
+                            Please type a username.
+                        </div>
+                    </div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+                        <label for="floatingPassword" class="label">Password</label>
+                        <div class="invalid-feedback">
+                            Please type a password.
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg mt-5" id="login"> Log In </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.querySelector('#login_form').onsubmit = function(event){
+            // username
+			if ( document.querySelector('#floatingUsername').value.trim().length == 0 ) {
+                event.preventDefault();
+				document.querySelector('#floatingUsername').classList.add('is-invalid');
+			} else {
+				document.querySelector('#floatingUsername').classList.remove('is-invalid');
+			}
+            // password
+            if ( document.querySelector('#floatingPassword').value.trim().length == 0 ) {
+                event.preventDefault();
+				document.querySelector('#floatingPassword').classList.add('is-invalid');
+			} else {
+				document.querySelector('#floatingPassword').classList.remove('is-invalid');
+			}
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
 </html>
