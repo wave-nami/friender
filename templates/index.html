@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="img/squarelogo.png">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='squarelogo.png')}}">
     <title>knot a stranger</title>
 
     <!--CSS and bootstrap-->
@@ -124,7 +124,7 @@
     <!-- logo and title -->
     <div class="container">
         <div class="row justify-content-center">
-            <img src="img/squarelogo.png" id="logo" class="floating"/>
+            <img src="{{url_for('static', filename='squarelogo.png')}}" id="logo" class="floating"/>
         </div>
 
         <div class="row justify-content-center">
@@ -139,7 +139,7 @@
 
         <div class="row justify-content-center">
             <!-- sign in button -->
-            <form action="/page/signin" class="floating">
+            <form action="/page/login" method="POST" class="floating">
                 <button type="submit" class="btn btn-link" id="signin"> Sign In </button>
             </form>
         </div>
