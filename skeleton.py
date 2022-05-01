@@ -9,50 +9,104 @@ db = 'userinfo.db'
 
 
 @app.route("/")
-def home():
+def home_page():
     """ home page """
     # might need to pass more components
     return render_template("index.html")
 
 
 @app.route("/client")
-def client():
+def client_page():
     """ send user to their user page """
     # admin: sent to admin.html
-    if session['admin']:
+    admin = session.pop('admin', None)
+    if admin:
         return render_template('admin.html')
-    # user: sent to user.html
+    # user: sent to profile.html
     else:
         return render_template('user.html')
 
 
+@app.route("/page/login", methods=["POST", "GET"])
+def login_page():
+    """ from index.html, taken to login page """
+    if request.method == "POST":
+        return render_template('login.html')
+
+
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    # check credentials with db
-    # if credential is correct, send to client()
-    # start session
-    # else send them back to log in page
-    if request.method == "POST" and db_check_creds(request.form["username"], request.form["password"]):
-        session["username"] = request.form["username"]
-        session["logged_in"] = True
-        return redirect(url_for('client'))
-    else:
-        return redirect(url_for('home'))
+    """ from login.html, log in form """
+    return redirect(url_for("client_page"))
 
 
-@app.route("/registration", methods=["POST", "GET"])
-def registration():
+@app.route("/page/register", methods=["POST", "GET"])
+def register_page():
     """ send user to registration form """
     # format the birthday
-    formatted = datetime.today().strftime('%Y-%m-%d')
-    year = int(formatted[:4]) - 18
-    birthday = str(year) + formatted[4:]
+    formatted = datetime.today().strftime('%m/%d/%Y')
+    year = int(formatted[6:]) - 18
+    birthday = formatted[:6] + str(year)
+
+    fakes = {1: 'hiking', 2: 'cooking', 3:'bruh'}
+    return render_template('profile.html', message="Welcome, Stranger.", action="register", disabled='', display="none", maxdate=birthday, interests=fakes, submit_type="Register")
+
+
+@app.route("/register", methods=["POST", "GET"])
+def register():
+    """ submitted registration form, add new user to the database """
+    if request.method == "POST":
+        # TODO : how to input interests
+        # TODO : check the name attributes of the form
+        # TODO : check how to block empty entries
+        # sessions and variable names for checking the credentials are right
+        # firstname, lastname, username, number, password, confirm, interests, sexual orientation
+        #   profile picture, social media, culture/race/ethnicity
+
+        # examples
+        session['firstname'] = request.form["fname"]
+        session['lastname'] = request.form["lname"]
+
+        # other form responses
+        # username = request.form["username"]
+        # number = request.form["number"]
+        # password = request.form["password"]
+        # confirm = request.form["password"]
+        # age = calc_age(request.form["birthday"])
+
+    # there is no number verification rn
+    return redirect(url_for("client_page"))
+
+    #     # and other parts of the profile
+    #     em = verify_registration(username, password, confirm)
+    #     if em != '':
+    #         session['errorMessage'] = em
+    #         return redirect(url_for("registration"))
+    #
+    # # send to number verification
+    # session['number'] = number
+    # return redirect(url_for("numberVerification"))
+
+
+@app.route("/page/edit", methods=["POST", "GET"])
+def edit_page():
+    """ send user to registration form """
+    # format the birthday
+    formatted = datetime.today().strftime('%m/%d/%Y')
+    year = int(formatted[6:]) - 18
+    birthday = formatted[:6] + str(year)
 
     # check if there is an error message
     em = session.pop('errorMessage', None)
     if em is None:
         em = ''
-    return render_template('registration.html', date=birthday, errorMessage=em)
+    return render_template('profile.html', date=birthday, errorMessage=em)
+
+
+@app.route("/edit", methods=["POST", "GET"])
+def edit():
+    """ confirm and commit edit changes to DB """
+    # format the birthday
 
 
 @app.route("/registration/numberVerification", methods=["POST", "GET"])
@@ -71,55 +125,16 @@ def numberVerification():
             fname = session.pop('firstname', None)
             db_create_user(fname, ...)
             # redirect user to their user page
-            return redirect(url_for("client"))
+            return redirect(url_for("client_page"))
         else:
             # try verifying again or redirect them to registration
             return redirect(url_for("numberVerification"))
-
-
-@app.route("/action/register", methods=["POST", "GET"])
-def register():
-    """ submitted registration form, add new user to the database """
-    if request.method == "POST":
-        # TODO : how to input interests
-        # TODO : check the name attributes of the form
-        # TODO : check how to block empty entries
-        # sessions and variable names for checking the credentials are right
-        # firstname, lastname, username, number, password, confirm, interests, sexual orientation
-        #   profile picture, social media, culture/race/ethnicity
-
-        # examples
-        session['firstname'] = request.form["fname"]
-        session['lastname'] = request.form["lname"]
-
-        # other form responses
-        username = request.form["username"]
-        number = request.form["number"]
-        password = request.form["password"]
-        confirm = request.form["password"]
-        age = calc_age(request.form["birthday"])
-
-        # and other parts of the profile
-        em = verify_registration(username, password, confirm)
-        if em != '':
-            session['errorMessage'] = em
-            return redirect(url_for("registration"))
-
-    # send to number verification
-    session['number'] = number
-    return redirect(url_for("numberVerification"))
 
 
 @app.route("/userinfo")
 def userinfo():
     # TODO : user profile page
     return render_template('userinfo.html')
-
-
-@app.route("/action/edit", methods=["POST", "GET"])
-def edit_userinfo():
-    # TODO : edit user information
-    pass
 
 
 @app.route("/action/interest", methods=["POST", "GET"])
@@ -174,10 +189,10 @@ def verify_registration(un, pw, c):
 
 
 def calc_age(b):
-    """ calculate users age from their birthday in YYYY-MM-DD format """
-    year, month, date = b.split('-')
-    birthdate = date(int(year), int(month), int(date))
-    today = date.today()
+    """ calculate users age from their birthday in MM/DD/YYYY format """
+    month, da, year = b.split('/')
+    birthdate = datetime(int(month), int(da), int(year))
+    today = datetime.today().strftime('%m/%d/%Y')
     age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
     return age
 
@@ -376,14 +391,9 @@ def db_get_interest_list(inter):
     return interlist
 
 
-#if __name__ == "__main__":
-    #app.secret_key = os.urandom(12)
-    #app.run(debug=True)
-
-db_create_user("firstname", "lastname", "username", 27, "password", "they/them", "hi!", "@Hi.com")
-db_create_user("firstname2", "lastname2", "username2", 27, "password", "they/them", "hi!", "@Hi.com")
-db_create_user("firstname3", "lastname3", "username3", 27, "password", "they/them", "hi!", "@Hi.com")
-db_create_user("firstname4", "lastname4", "username4", 27, "password", "they/them", "hi!", "@Hi.com")
-ids = db_get_user_friendListids()
-print(ids)
-print(db_get_user_friendListstrings(ids))
+if __name__ == "__main__":
+    app.secret_key = os.urandom(12)
+    app.run(debug=True)
+    # db_create_user("bob", "morgan", "bm", 3, "carol", "male", "hi!", "@carol")
+    # db_create_user("bob", "morgan", "carol", 3, "carol", "male", "hi!", "@carol")
+    # db_create_user("bob", "morgan", "thomas", 3, "carol", "male", "hi!", "@carol")

@@ -2,9 +2,152 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='squarelogo.png')}}">
+    <title>knot a stranger</title>
+
+    <!--CSS and bootstrap-->
+    <style>
+        /* Internal CSS */
+        html body{
+            background-color: #F4F1EB;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 0;
+        }
+
+        #signin{
+            font-family: 'Jacques Francois';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 60px;
+            line-height: 70px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            text-decoration-line: underline;
+            color: #000000;
+            text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #logo{
+            padding-top: 30px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            width: 30%;
+        }
+
+        .floating {
+            animation-name: floating;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+            margin-left: 30px;
+            margin-top: 5px;
+        }
+
+        @keyframes floating {
+            0% { transform: translate(0,  0px); }
+            50%  { transform: translate(0, 20px); }
+            100%   { transform: translate(0, -0px); }
+        }
+
+        #title{
+            font-family: 'Jacques Francois';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 120px;
+            line-height: 120px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            /* Chocolate */
+            color: #6A605E;
+        }
+
+        #description{
+            font-family: 'Jacques Francois';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 60px;
+            line-height: 79px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #000000;
+        }
+
+        .row{
+            display: flex;
+            align-items: center;
+            text-align: center;
+            /* border: 1px solid black; */
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        span{
+            color: #416F60;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* tablet or mobile */
+        @media (max-width: 991px){
+            #logo{
+                width: 60%;
+            }
+            #title{
+                font-size: 100px;
+                line-height: 100px;
+            }
+            #description{
+                font-size: 50px;
+                line-height: 60px;
+            }
+        }
+
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
+    <!-- logo and title -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <img src="{{url_for('static', filename='squarelogo.png')}}" id="logo" class="floating"/>
+        </div>
 
+        <div class="row justify-content-center">
+            <div class="col-auto" id="title">knot a stranger</div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-auto" id="description">
+                <p>“We were <span>strangers</span>, but not strangers anymore. We are strangers <span>knitted</span> into friendship.”</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <!-- sign in button -->
+            <form action="/page/login" method="POST" class="floating">
+                <button type="submit" class="btn btn-link" id="signin"> Sign In </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Internal JS
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 </html>

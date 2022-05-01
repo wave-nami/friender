@@ -1,0 +1,94 @@
+/* nav bar */
+.navlink{
+    color: #493D31;
+    font-family: 'Jacques Francois';
+    font-weight: 400;
+    font-size: 18px;
+}
+.navlink:hover{
+    color: #416F60;
+}
+/* end: nav bar */
+
+/* html and body */
+html body{
+    background-color: #F4F1EB;
+    margin: 0;
+}
+
+/* reuseable titles */
+h1{
+    font-family: 'Jacques Francois';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 45px;
+    line-height: 74px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #493D31;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+/* reuseable buttons */
+.btn-primary{
+    border-color: #8C8074;
+    background: #8C8074;
+    font-family: 'Jacques Francois';
+}
+.btn-primary:hover{
+    border-color: #416F60;
+    background: #416F60;
+}
+.btn-primary:focus{
+    border-color: #416F60;
+    background: #416F60;
+    box-shadow: 0 0 0 0;
+}
+
+/* reusable form stuff */
+.label{
+    font-family: 'Jacques Francois';
+    color: #6C5B4A;
+}
+
+.form-control{
+    font-family: 'Jacques Francois';
+    font-size: 20px;
+    background-color: #D2C6BA;
+    border-color: #D2C6BA;
+}
+
+.form-control:focus{
+    font-family: 'Jacques Francois';
+    font-size: 20px;
+    background-color: #D2C6BA;
+    border-color: #D2C6BA;
+    box-shadow: 0 0 0 0;
+}
+
+.invalid-feedback{
+    font-family: 'Jacques Francois';
+    font-size: 16px;
+}
+
+.comment{
+    font-family: 'Jacques Francois';
+    font-size: 16px;
+    color: #493D31;
+}
+
+/* row stuff */
+.row{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    /* border: 1px solid black; */
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
