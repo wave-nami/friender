@@ -1,6 +1,6 @@
 class UserProfile(object):
     def __init__(self, firstName, lastName, age, uName, password, pronouns,
-                 interestList, sentFriendReq, receivedFriendReq, bio, socialMedia):
+                 interestList, friendList, receivedFriendReq, bio, socialMedia):
         self.__firstName = firstName # String
         self.__lastName = lastName # String
         self.__age = age # int
@@ -8,7 +8,7 @@ class UserProfile(object):
         self.__password = password # String
         self.__pronouns = pronouns # enum???
         self.__interestList = interestList # make list out of Interest enum
-        self.__sentFriendReq = sentFriendReq
+        self.__friendList = friendList
         self.__receivedFriendReq = receivedFriendReq
         self.__bio = bio
         self.__socialMedia = socialMedia
@@ -58,11 +58,11 @@ class UserProfile(object):
     def setInterestList(self, interestList):
         self.__interestList = interestList
 
-    def getSentFriendReq(self):
-        return self.__sentFriendReq
+    def getFriendList(self):
+        return self.__friendList
 
-    def setSentFriendReq(self, sentFriendReq):
-        self.__sentFriendReq = sentFriendReq
+    def setFriendList(self, friendList):
+        self.__friendList = friendList
 
     def getReceivedFriendReq(self):
         return self.__receivedFriendReq
