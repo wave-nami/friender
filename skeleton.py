@@ -5,7 +5,7 @@ from datetime import datetime, date
 
 app = Flask(__name__)
 # TODO : database file name
-db = '.db'
+db = 'userinfo.db'
 
 
 @app.route("/")
@@ -135,14 +135,14 @@ def chat():
     pass
 
 
-@app.route("/action/friendrequest", methods=["POST", "GET"])
-def friendrequest():
+@app.route("/action/send", methods=["POST", "GET"])
+def send_friendrequest():
     # TODO : send someone a friend request
     pass
 
 
-@app.route("/action/friendrequest", methods=["POST", "GET"])
-def friendrequest():
+@app.route("/action/accept", methods=["POST", "GET"])
+def accept_friendrequest():
     # TODO : accept a friend request
     pass
 
@@ -187,24 +187,55 @@ def face_verification():
     pass
 
 
-def db_create_user(un, pw):
-    # TODO : implement create user functionality
-    pass
+def db_create_user(fname, lname, uname, age, pw, gender, bio, sm):
+    conn = sl.connect(db)
+    curs = conn.cursor()
+    v = (fname, lname, uname, age, pw, gender, bio, sm)
+    stmt = "INSERT OR IGNORE INTO userinfo (f_name,l_name,u_name,age,pw,gender,bio,sm) VALUES " + str(v)
+    curs.execute(stmt)
+    conn.commit()
+    conn.close()
 
 
-def db_get_user_list():
-    # TODO : implement get user list functionality
+def db_create_user_interests(id, in1, in2, in3, in4, in5):
+    # TODO: (UNFINISHED) fill out registered person's interest list
+    conn = sl.connect(db)
+    curs = conn.cursor()
+    v = (id, in1, in2, in3, in4, in5)
+    stmt = "INSERT OR IGNORE INTO userInterest (f_name,l_name,u_name,age,pw,gender,bio,sm) VALUES " + str(v)
+    curs.execute(stmt)
+    conn.commit()
+    conn.close()
+
+
+def db_get_username_list():
+    conn = sl.connect(db)
+    curs = conn.cursor()
+    stmt = "SELECT u_name FROM userinfo"
+    curs.execute(stmt)
+    records = curs.fetchall()
     brutish = []
+    for row in records:
+        brutish.append(row[0])
+    conn.close()
     return brutish
 
 
 def db_check_creds(un, pw):
-    # TODO : check creds
-    return True
+    conn = sl.connect(db)
+    curs = conn.cursor()
+    v = (un,)
+    stmt = "SELECT * FROM userinfo WHERE u_name =?"
+    curs.execute(stmt, v)
+    if pw == curs.fetchone()[5]:
+        conn.close()
+        return True
+    conn.close()
+    return False
 
 
-def db_get_userinfo():
-    # TODO : get user's info
+def db_get_userinfo(un):
+    # TODO : when login or register, create new logged in person's session, return user object
     pass
 
 
@@ -214,11 +245,26 @@ def db_set_userinfo(inp):
 
 
 def db_remove_user(un):
-    # TODO : remove user info
-    pass
+    conn = sl.connect(db)
+    curs = conn.cursor()
+    v = (un,)
+    stmt = "DELETE FROM userinfo WHERE u_name=?"
+    curs.execute(stmt, v)
+    conn.commit()
+    conn.close()
 
 
-def db_get_interest_list(int):
+def db_get_interest_list(inter):
     # TODO : get users that have the same interest
+    conn = sl.connect(db)
+    curs = conn.cursor()
+    v = (inter,)
+    stmt = "SELECT * FROM userinfo WHERE u_name =?"
+    curs.execute(stmt, v)
     l = []
     return l
+
+
+db_create_user("bob", "morgan", "bm", 3, "carol", "male", "hi!", "@carol")
+db_create_user("bob", "morgan", "carol", 3, "carol", "male", "hi!", "@carol")
+db_create_user("bob", "morgan", "thomas", 3, "carol", "male", "hi!", "@carol")
