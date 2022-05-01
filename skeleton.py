@@ -42,7 +42,6 @@ def login():
     pw = request.form['password']
     if (db_check_creds(un,pw)):
         currentUser = db_get_user(un)
-        session['userid'] = currentUser[1]
         return redirect(url_for("client_page"))
     return redirect(url_for("home_page"))
 
@@ -300,6 +299,7 @@ def db_get_user(un):
     curs.execute(stmt, v)
     records1 = curs.fetchall()
     conn.close()
+    session['userid'] = records1[0][0]
     intmap = db_get_user_interestmap()
     friendlist = db_get_user_friendList()
     receivedReqs = db_get_user_receivedReq()
@@ -441,7 +441,6 @@ def db_get_interest_list(inter):
     conn.close()
     return interlist
 
-
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
     app.run(debug=True)
@@ -452,7 +451,6 @@ if __name__ == "__main__":
 #db_create_user("bob3", "morgan", "thomas", 3, "carol", "male", "hi!", "@carol")
 #db_create_user("bob4", "morgan", "barley", 3, "carol", "male", "hi!", "@carol")
 #db_create_friendrequest(1)
-#db_create_user_interests(1,2,3,4,5)
 #print(db_get_user("barley"))
 
 
