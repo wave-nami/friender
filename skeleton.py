@@ -10,14 +10,14 @@ db = 'userinfo.db'
 
 
 @app.route("/")
-def home():
+def home_page():
     """ home page """
     # might need to pass more components
     return render_template("index.html")
 
 
 @app.route("/client")
-def client():
+def client_page():
     """ send user to their user page """
     # admin: sent to admin.html
     if session['admin']:
@@ -27,18 +27,18 @@ def client():
         return render_template('user.html')
 
 
+@app.route("/page/login", methods=["POST", "GET"])
+def login_page():
+    """ from index.html, taken to login page """
+    if request.method == "POST":
+        return render_template('login.html')
+
+
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    # check credentials with db
-    # if credential is correct, send to client()
-    # start session
-    # else send them back to log in page
-    if request.method == "POST" and db_check_creds(request.form["username"], request.form["password"]):
-        session["username"] = request.form["username"]
-        session["logged_in"] = True
-        return redirect(url_for('client'))
-    else:
-        return redirect(url_for('home'))
+    """ from login.html, log in form """
+    # TODO : what happens when a person logs in
+    pass
 
 
 @app.route("/registration", methods=["POST", "GET"])
@@ -72,7 +72,7 @@ def numberVerification():
             fname = session.pop('firstname', None)
             db_create_user(fname, ...)
             # redirect user to their user page
-            return redirect(url_for("client"))
+            return redirect(url_for("client_page"))
         else:
             # try verifying again or redirect them to registration
             return redirect(url_for("numberVerification"))
