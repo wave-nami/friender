@@ -83,8 +83,12 @@ submit_type for register or confirm change -->
                 <!-- mobile number -->
                 <div class="col-8">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="floatingNumber" placeholder="Mobile Number" name="number" {{disabled}}>
-                        <!-- <input type="tel" class="form-control" id="floatingNumber" placeholder="xxx-xxx-xxxx" name="number" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required> -->
+                        <!-- <input type="text" class="form-control" id="floatingNumber" placeholder="Mobile Number" name="number" {{disabled}}> -->
+                        <input type="tel" class="form-control" id="floatingNumber" placeholder="xxx-xxx-xxxx" name="number" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required>
+                        <!-- Following lines are Grace's addition... need to be checked -->
+                        <input required>
+                        <input pattern="\d*" title="Numbers only, please.">
+                        <!-- End of Grace's additions -->
                         <label for="floatingNumber" class="label">Mobile Number (xxx-xxx-xxxx)</label>
                         <small class="comment" style="display: {{display}};">phone number cannot be changed.</small>
                         <small class="comment" style="display: none;">phone number cannot be changed.</small>
@@ -132,7 +136,7 @@ submit_type for register or confirm change -->
                 <!-- birthdate -->
                 <div class="col-4">
                     <div class="form-floating">
-                        <input type="date" class="form-control" id="floatingBirthday" placeholder="Birthday" name="birthday" max="{{maxdate}}">
+                        <input type="date" class="form-control" id="floatingBirthday" placeholder="Birthday" name="birthday" max="{{maxdate}}" required>
                         <label for="floatingBirthday" class="label">Birthday</label>
                         <div class="invalid-feedback">
                             Please type your birthday.

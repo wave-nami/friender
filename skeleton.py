@@ -44,9 +44,9 @@ def login():
 def register_page():
     """ send user to registration form """
     # format the birthday
-    formatted = datetime.today().strftime('%m/%d/%Y')
-    year = int(formatted[6:]) - 18
-    birthday = formatted[:6] + str(year)
+    formatted = datetime.today().strftime('%Y-%m-%d')
+    year = int(formatted[:4]) - 18
+    birthday = str(year) + formatted[4:]
 
     fakes = {1: 'hiking', 2: 'cooking', 3:'bruh'}
     return render_template('profile.html', message="Welcome, Stranger.", action="register", disabled='', display="none", maxdate=birthday, interests=fakes, submit_type="Register")
